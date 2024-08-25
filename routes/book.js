@@ -23,7 +23,7 @@ router.get('/:id', bookCtrl.getOneBook)
 router.put('/:id', auth, multer, bookCtrl.modifyBook)
 
 // //delete book :id
-router.delete('/:id', auth, bookCtrl.deleteBook)
+// router.delete('/:id', auth, bookCtrl.deleteBook)
 
 // //post :id rating
 // router.post('/:id/rating', bookCtrl.createRatingBook)
