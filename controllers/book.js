@@ -64,6 +64,7 @@ exports.modifyBook = (req, res, next) => {
                         if (error) console.error('erreur de suppression', error)
                     })
                 }
+                console.log('bookObject : ', { ...bookObject, _id: req.params.id })
                 Book.updateOne({ _id: req.params.id }, { ...bookObject, _id: req.params.id })
                     .then(() => res.status(200).json({ message: 'Livre modifié' }))
                     .catch(error => res.status(401).json({ error }))
@@ -89,6 +90,62 @@ exports.deleteBook = (req, res, next) => {
         .catch( error => res.status(500).json({ error }))
 }
 
+
 exports.createRatingBook = (req, res, next) => {
-    
+    //grade needs to be between 1 and 5 
+
+    //sur la requête reçue
+    const userId = req.auth.userId
+    const bookId = req.params.id
+    const rating = req.body.rating
+
+    const isRatingCorrect = (rating, min = 1, max = 5) => {
+        return rating >= min && rating <= max
+    }
+
+    if (!isRatingCorrect(rating)) {
+        return res.status(403).json({ message: 'La note doit être comprise entre 1 et 5'})
+    }
+
+    Book.findOne({ _id: bookId })
+        .then((book) => { 
+            let isAlreadyRated = book.ratings.some((rat) => rat.userId === userId )
+                if (isAlreadyRated === true) {
+                return res.status(403).json({ message: 'Vous avez déjà noté ce livre. ' })
+            } else {
+                book.ratings.push({
+                    userId: userId,
+                    grade: rating
+                })
+            }
+
+            let totalRatings = book.ratings.map((rat) => rat.grade)
+            let sumGrades = totalRatings.reduce((acc, grade) => acc + grade, 0)
+
+            let averageRatingGrade = totalRatings.length > 0 ? Math.round(sumGrades / totalRatings.length) : 0;
+
+            console.log('Moyenne des notes: ', averageRatingGrade)
+
+
+            return Book.updateOne({ _id: bookId }, {
+                //Quand la note a été ajouté, on calcule le averageRating
+                // On prend toute les notes enregistrées et on divise par la longueur du tableau
+                //comment faire pour que ça s'affiche directement ? 
+                averageRating: averageRatingGrade,
+                ratings: book.ratings
+            })
+            .then(() => {
+                return Book.findOne({ _id: bookId });
+            })
+            .then((updatedBook) => {
+                res.status(200).json(updatedBook);
+            })
+            .catch((error) => {
+                console.error(error);
+                res.status(500).json({ message: 'Erreur lors de la mise à jour du livre.' });
+            });
+                
+            // .then(() =>  res.status(200).json(book))
+            // .catch(error => console.log(error))
+        })
 }
