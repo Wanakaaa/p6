@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
         req.auth = {
             userId: userId
         }
-        console.log('Middleware auth, userId extrait : ', userId)
+        // console.log('Middleware auth, userId extrait : ', userId)
         next()
     } catch(error) {
         res.status(401).json({ error })
