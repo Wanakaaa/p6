@@ -9,7 +9,8 @@ const MIME_TYPES = {
     'image/webp': 'webp'
 }
 
-const storage = multer.memoryStorage(); // Stockage en mémoire temporaire
+// Stockage en mémoire temporaire
+const storage = multer.memoryStorage(); 
 
 const upload = multer({ storage }).single('image')
 
@@ -25,8 +26,8 @@ const compressImage = (req, res, next) => {
     console.log('Nom du fichier après compression : ', filename);
 
     sharp(req.file.buffer)
-        .resize(206, 260) // Redimensionner l'image à une largeur maximale de 800px
-        .toFormat('webp') // Convertir en WebP
+        .resize(206, 260) 
+        .toFormat('webp')
         .toFile(path.join('images', filename)) // Sauvegarder l'image compressée
         .then(() => {
             req.file.path = `images/${filename}`; // Mettre à jour le chemin du fichier dans req.file
