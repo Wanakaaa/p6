@@ -38,7 +38,6 @@ exports.getOneBook = (req, res, next) => {
 }
 
 exports.modifyBook = (req, res, next) => {
-    console.log('req.body avant modification :', req.body);
     const bookObject = req.file ? {
         ...JSON.parse(req.body.book),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -52,14 +51,11 @@ exports.modifyBook = (req, res, next) => {
                 res.status(403).json({ message: 'Non autorisé' })
             } else {
                 if (req.file) {
-                    console.log('req.file: ', req.file)
                     const oldFilename = book.imageUrl.split('/images/')[1]
-                    console.log('ancien nom: ', oldFilename)
                     fs.unlink(`images/${oldFilename}`, (error) => {
                         if (error) console.error('erreur de suppression', error)
                     })
                 }
-                console.log('bookObject : ', { ...bookObject, _id: req.params.id })
                 Book.updateOne({ _id: req.params.id }, { ...bookObject })
                 // Book.updateOne({ _id: req.params.id }, { ...bookObject, _id: req.params.id })
                     .then(() => res.status(200).json({ message: 'Livre modifié' }))

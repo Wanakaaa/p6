@@ -23,7 +23,6 @@ const compressImage = (req, res, next) => {
     const name = req.file.originalname.split(' ').join('_').split('.')[0]; // Nom sans l'extension
     const filename = `${name}_${Date.now()}.${extension}`; // Nouveau nom avec timestamp
 
-    console.log('Nom du fichier après compression : ', filename);
 
     sharp(req.file.buffer)
         .resize(206, 260) 
@@ -36,7 +35,7 @@ const compressImage = (req, res, next) => {
         })
         .catch((err) => {
             console.error('Erreur lors de la compression de l\'image:', err);
-            res.status(500).json({ error: 'Erreur lors du traitement de l\'image' });
+            res.status(500).json({ err});
         });
 }
 
