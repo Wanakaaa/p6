@@ -124,7 +124,7 @@ exports.createRatingBook = (req, res, next) => {
             })
             .catch((error) => {
                 console.error(error);
-                res.status(500).json({ message: 'Erreur lors de la mise à jour du livre.' });
+                res.status(500).json({ error });
             });
         })
 }
