@@ -33,9 +33,8 @@ const compressImage = (req, res, next) => {
             req.file.filename = filename; // Mettre à jour le nom du fichier dans req.file
             next();
         })
-        .catch((err) => {
-            console.error('Erreur lors de la compression de l\'image:', err);
-            res.status(500).json({ err});
+        .catch((error) => {
+            res.status(500).json({ error });
         });
 }
 
