@@ -48,7 +48,7 @@ exports.modifyBook = (req, res, next) => {
     Book.findOne({ _id: req.params.id })
         .then((book) => {
             if (book.userId != req.auth.userId) {
-                res.status(403).json({ message: 'Non autorisé' })
+                res.status(403).json({ error })
             } else {
                 if (req.file) {
                     const oldFilename = book.imageUrl.split('/images/')[1]
@@ -73,7 +73,7 @@ exports.deleteBook = (req, res, next) => {
                 return res.status(404).json({ message: 'Livre non trouvé' });
             }
             if (book.userId != req.auth.userId) {
-                return res.status(403).json({ message: 'Non autorisé' })
+                return res.status(403).json({ error })
             }
 
             const filename = book.imageUrl.split('/images/')[1];
@@ -94,22 +94,22 @@ exports.deleteBook = (req, res, next) => {
 exports.createRatingBook = (req, res, next) => {
     const isRatingCorrect = (rating, min = 1, max = 5) => rating >= min && rating <= max
     if (!isRatingCorrect(req.body.rating)) {
-        return res.status(403).json({ message: 'La note doit être comprise entre 1 et 5'})
+        return res.status(403).json({ error: new Error('La note doit être comprise entre 1 et 5')})
     }
     Book.findOne({ _id: req.params.id })
         .then((book) => { 
             let isAlreadyRated = book.ratings.some((rating) => rating.userId === req.auth.userId )
                 if (isAlreadyRated) {
-                return res.status(403).json({ message: 'Livre déjà noté.' })
+                return res.status(403).json({ error: new Error('Livre déjà noté.') })
             }
 
             book.ratings.push({
                 userId: req.auth.userId,
                 grade: req.body.rating
             })
-            let arrayGrades = book.ratings.map((rating) => rating.grade)
-            let sumGrades = arrayGrades.reduce((acc, grade) => acc + grade, 0)
-            let averageRatingGrade = arrayGrades.length > 0 ? Math.round(sumGrades / arrayGrades.length) : 0;
+            
+            let sumGrades = book.ratings.reduce((acc, rating) => acc + rating.grade, 0)
+            let averageRatingGrade = book.ratings.length > 0 ? Math.round(sumGrades / book.ratings.length) : 0;
             
             return Book.findOneAndUpdate(
                 { _id: req.params.id }, 

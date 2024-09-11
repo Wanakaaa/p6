@@ -2,25 +2,26 @@ const express = require('express')
 const router = express.Router()
 
 const auth = require('../middleware/auth')
-const { upload, compressImage } = require('../middleware/multer-config')
+const multer = require('../middleware/multer-config')
+const sharp = require('../middleware/sharp')
 
 
 const bookCtrl = require('../controllers/book')
 
 // Post a new book
-router.post('/', auth, upload, compressImage, bookCtrl.createBook)
+router.post('/', auth, multer, sharp, bookCtrl.createBook) //ok
 
 // Get all the books
-router.get('/', bookCtrl.getAllBooks)
+router.get('/', bookCtrl.getAllBooks) //ok
 
 // Get 3 books with the best rating
-router.get('/bestrating', bookCtrl.getBestRating);
+router.get('/bestrating', bookCtrl.getBestRating); //ok
 
   //Get one specific book
-router.get('/:id', bookCtrl.getOneBook)
+router.get('/:id', bookCtrl.getOneBook) //ok
 
 // // Put book :id
-router.put('/:id', auth, upload, compressImage, bookCtrl.modifyBook)
+router.put('/:id', auth, multer, sharp, bookCtrl.modifyBook) //ok
 
 // //delete book :id
 router.delete('/:id', auth, bookCtrl.deleteBook)
