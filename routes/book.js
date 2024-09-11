@@ -9,19 +9,19 @@ const sharp = require('../middleware/sharp')
 const bookCtrl = require('../controllers/book')
 
 // Post a new book
-router.post('/', auth, multer, sharp, bookCtrl.createBook) //ok
+router.post('/', auth, multer, sharp, bookCtrl.createBook)
 
 // Get all the books
-router.get('/', bookCtrl.getAllBooks) //ok
+router.get('/', bookCtrl.getAllBooks)
 
 // Get 3 books with the best rating
-router.get('/bestrating', bookCtrl.getBestRating); //ok
+router.get('/bestrating', bookCtrl.getBestRating);
 
   //Get one specific book
-router.get('/:id', bookCtrl.getOneBook) //ok
+router.get('/:id', bookCtrl.getOneBook)
 
 // // Put book :id
-router.put('/:id', auth, multer, sharp, bookCtrl.modifyBook) //ok
+router.put('/:id', auth, multer, sharp, bookCtrl.modifyBook)
 
 // //delete book :id
 router.delete('/:id', auth, bookCtrl.deleteBook)
