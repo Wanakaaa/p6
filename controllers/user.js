@@ -4,10 +4,20 @@ require('dotenv').config()
 const User = require('../models/User')
 
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10)
+    const password = req.body.password
+    const email = req.body.email
+    const minLength = 8;
+    if (password.length < minLength) {
+        return res.status(400).json({error: new Error ('Le mot de passe doit contenir au minimum 8 caractères')})
+    }
+    const regexEmail = /^[\w.-]+@[a-zA-Z\d.-]+.[a-zA-Z]{2,}$/
+    if (regexEmail.test(email) === false){
+        return res.status(400).json({error: new Error(`L'adresse mail n'est pas valide`)})
+    }
+    bcrypt.hash(password, 10)
         .then(hash => {
             const user = new User({ 
-                email: req.body.email,
+                email: email,
                 password: hash
             })
             user.save()
